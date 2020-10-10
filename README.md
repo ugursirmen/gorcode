@@ -1,2 +1,2 @@
 # gorcode
-A basic product tracking and barcode creator tool. Written/coded with golang & js.
+A basic product tracking and barcode creator web app.
