@@ -5,32 +5,14 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
-	"text/template"
 
 	"github.com/gorilla/mux"
 )
 
 type PageVariables struct {
 	PageTitle string
-}
-
-func Index(w http.ResponseWriter, r *http.Request) {
-
-	IndexPageVariables := PageVariables{
-		PageTitle: "Product Stock",
-	}
-
-	t, err := template.ParseFiles("index.html")
-	if err != nil {
-		log.Print("template parsing error: ", err)
-	}
-	err = t.Execute(w, IndexPageVariables)
-	if err != nil {
-		log.Print("template executing error: ", err)
-	}
 }
 
 func ProductList(w http.ResponseWriter, r *http.Request) {

@@ -31,16 +31,12 @@ func NewRouter() *mux.Router {
 			Handler(handler)
 	}
 
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
 	return router
 }
 
 var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/",
-		Index,
-	},
 	Route{
 		"ProductList",
 		"GET",
