@@ -1,2 +1,2 @@
 # gorcode
-A basic barcode creator and product tracker tool.
+A basic product tracking and barcode creator tool.
