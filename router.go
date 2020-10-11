@@ -50,15 +50,21 @@ var routes = Routes{
 		ProductDetail,
 	},
 	Route{
-		"ProductCreate",
+		"ProductAdd",
 		"POST",
 		"/products",
-		ProductCreate,
+		ProductAdd,
 	},
-	// Route{
-	// 	"ProductUpdate",
-	// 	"PUT",
-	// 	"/products/{code}",
-	// 	ProductUpdate,
-	// },
+	Route{
+		"ProductUpdate",
+		"PUT",
+		"/products/{code}",
+		ProductUpdate,
+	},
+	Route{
+		"ProductRemove",
+		"DELETE",
+		"/products/{code}",
+		ProductRemove,
+	},
 }
