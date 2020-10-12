@@ -26,9 +26,9 @@ func ProductList(w http.ResponseWriter, r *http.Request) {
 func ProductDetail(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	code := vars["code"]
+	barcode := vars["barcode"]
 
-	product := GetProduct(code)
+	product := GetProduct(barcode)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -78,9 +78,9 @@ func ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	code := vars["code"]
+	barcode := vars["barcode"]
 
-	UpdateProduct(product, code)
+	UpdateProduct(product, barcode)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -89,9 +89,9 @@ func ProductUpdate(w http.ResponseWriter, r *http.Request) {
 func ProductRemove(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	code := vars["code"]
+	barcode := vars["barcode"]
 
-	DeleteProduct(code)
+	DeleteProduct(barcode)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
