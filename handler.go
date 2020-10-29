@@ -2,21 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"io"
-	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-type PageVariables struct {
-	PageTitle string
-}
-
 func ProductList(w http.ResponseWriter, r *http.Request) {
 	products := GetAllProducts()
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(products); err != nil {
 		panic(err)
@@ -26,11 +20,14 @@ func ProductList(w http.ResponseWriter, r *http.Request) {
 func ProductDetail(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	barcode := vars["barcode"]
 
-	product := GetProduct(barcode)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	product := GetProduct(id)
+
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(product); err != nil {
 		panic(err)
@@ -38,39 +35,27 @@ func ProductDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProductAdd(w http.ResponseWriter, r *http.Request) {
+
 	var product Product
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		panic(err)
-	}
-	if err := r.Body.Close(); err != nil {
-		panic(err)
-	}
-	if err := json.Unmarshal(body, &product); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
 	}
 
+	product.Barcode = product.Code + "1234567890"
+
 	CreateProduct(product)
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
 func ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	var product Product
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		panic(err)
-	}
-	if err := r.Body.Close(); err != nil {
-		panic(err)
-	}
-	if err := json.Unmarshal(body, &product); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
@@ -78,21 +63,27 @@ func ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	barcode := vars["barcode"]
 
-	UpdateProduct(product, barcode)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	UpdateProduct(product, id)
+
 	w.WriteHeader(http.StatusOK)
 }
 
 func ProductRemove(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	barcode := vars["barcode"]
 
-	DeleteProduct(barcode)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	DeleteProduct(id)
+
 	w.WriteHeader(http.StatusOK)
 }
