@@ -6,11 +6,25 @@
     },
     columns: [
       {
+        data: "ID",
+      },
+      {
         data: "barcode",
       },
       { data: "code" },
       { data: "name" },
-      { data: "modifiedAt" },
+      {
+        data: "CreatedAt",
+        render: function (data) {
+          return moment(data).format("DD.MM.YYYY HH:mm A");
+        }
+      },
+      {
+        data: "UpdatedAt",
+        render: function (data) {
+          return moment(data).format("DD.MM.YYYY HH:mm A");
+        }
+      },
       {
         targets: -1,
         data: null,
@@ -25,7 +39,7 @@
 
     $("#code").val(data.code);
     $("#name").val(data.name);
-    $("#selectedProductBarcode").val(data.barcode);
+    $("#selectedId").val(data.ID);
 
     $("#productModal").modal("show");
   });
@@ -33,7 +47,7 @@
   $("#table tbody").on("click", "button.delete-button", function () {
     var data = table.row($(this).parents("tr")).data();
 
-    $("#selectedProductBarcode").val(data.barcode);
+    $("#selectedId").val(data.ID);
 
     $("#codeLabel").text(data.code);
     $("#nameLabel").text(data.name);
@@ -45,63 +59,77 @@
   $("#productModal").on("hidden.bs.modal", function (e) {
     $("#code").val("");
     $("#name").val("");
-    $("#selectedProductBarcode").val("");
+    $("#selectedId").val("");
   });
 
   $("#deleteConfirmationModal").on("hidden.bs.modal", function (e) {
-    $("#selectedProductBarcode").val("");
+    $("#selectedId").val("");
   });
 
   $("#btnSave").on("click", function () {
-    var barcode = $("#selectedProductBarcode").val();
-    if (!barcode) {
+    var id = $("#selectedId").val();
+    if (!id) {
       addProduct();
     } else {
-      updateProduct(barcode);
+      updateProduct(id);
     }
   });
 
   $("#btnDelete").on("click", function () {
-    var barcode = $("#selectedProductBarcode").val();
-    deleteProduct(barcode);
+    var id = $("#selectedId").val();
+    deleteProduct(id);
   });
-
 })();
 
 function addProduct() {
   $.ajax({
     url: "http://localhost:8080/products",
     type: "POST",
-    data: {
+    data: JSON.stringify({
       code: $("#code").val(),
       name: $("#name").val(),
-    },
-    success: function () {
+    }),
+  })
+    .done(function (result) {
+      console.log(result);
       $("#productModal").modal("hide");
-    },
-  });
+      $("#table").DataTable().ajax.reload();
+    })
+    .fail(function (xhr, result, status) {
+      console.log("Error:", result);
+    });
 }
 
-function updateProduct(barcode) {
+function updateProduct(id) {
   $.ajax({
-    url: "http://localhost:8080/products/" + barcode,
+    url: "http://localhost:8080/products/" + id,
     type: "PUT",
-    data: {
+    data: JSON.stringify({
       code: $("#code").val(),
       name: $("#name").val(),
-    },
-    success: function () {
+    }),
+  })
+    .done(function (result) {
+      console.log(result);
       $("#productModal").modal("hide");
-    },
-  });
+      $("#table").DataTable().ajax.reload();
+    })
+    .fail(function (xhr, result, status) {
+      console.log("Error:", result);
+    });
 }
 
-function deleteProduct(barcode) {
+function deleteProduct(id) {
   $.ajax({
-    url: "http://localhost:8080/products/" + barcode,
+    url: "http://localhost:8080/products/" + id,
     type: "DELETE",
-    success: function () {
+  })
+    .done(function (result) {
+      console.log(result);
       $("#deleteConfirmationModal").modal("hide");
-    },
-  });
+      $("#table").DataTable().ajax.reload();
+    })
+    .fail(function (xhr, result, status) {
+      console.log("Error:", result);
+    });
 }
