@@ -46,7 +46,7 @@ var routes = Routes{
 	Route{
 		"ProductDetail",
 		"GET",
-		"/products/{barcode}",
+		"/products/{id}",
 		ProductDetail,
 	},
 	Route{
@@ -58,13 +58,13 @@ var routes = Routes{
 	Route{
 		"ProductUpdate",
 		"PUT",
-		"/products/{barcode}",
+		"/products/{id}",
 		ProductUpdate,
 	},
 	Route{
 		"ProductRemove",
 		"DELETE",
-		"/products/{barcode}",
+		"/products/{id}",
 		ProductRemove,
 	},
 }

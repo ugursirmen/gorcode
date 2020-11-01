@@ -1,43 +1,53 @@
 package main
 
 import (
-	"strconv"
-	"time"
+	"gorm.io/gorm"
 )
 
 type Product struct {
-	Code       string    `json:"code"`
-	Name       string    `json:"name"`
-	Barcode    string    `json:"barcode"`
-	ModifiedAt time.Time `json:"modifiedAt"`
+	gorm.Model
+	Code    string `json:"code"`
+	Name    string `json:"name"`
+	Barcode string `json:"barcode"`
 }
 
-type Products []Product
+func GetAllProducts() []Product {
 
-func GetAllProducts() Products {
+	var products []Product
 
-	products := Products{}
-
-	for i := 0; i < 100; i++ {
-		products = append(products, Product{Code: "Code" + strconv.Itoa(i+1), Name: "Name " + strconv.Itoa(i+1), Barcode: "1234567890", ModifiedAt: time.Now()})
-	}
+	db.Find(&products)
 
 	return products
 }
 
-func GetProduct(barcode string) Product {
+func GetProduct(id int) Product {
 
-	return Product{Code: barcode, Name: "A product", Barcode: "1234567890"}
+	var product Product
+
+	if err := db.Where("ID = ?", id).First(&product).Error; err != nil {
+		panic(err)
+	}
+
+	return product
 }
 
 func CreateProduct(product Product) {
+	db.Create(&product)
+}
+
+func UpdateProduct(product Product, id int) {
+
+	var oldProduct = GetProduct(id)
+
+	oldProduct = product
+
+	db.Save(&oldProduct)
 
 }
 
-func UpdateProduct(product Product, barcode string) {
+func DeleteProduct(id int) {
 
-}
+	var oldProduct = GetProduct(id)
 
-func DeleteProduct(barcode string) {
-
+	db.Delete(&oldProduct)
 }
