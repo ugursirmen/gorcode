@@ -1,1 +1,1 @@
-*.* linguist-language=Go
+static/* linguist-vendored
