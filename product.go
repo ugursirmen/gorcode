@@ -32,6 +32,9 @@ func GetProduct(id int) Product {
 }
 
 func CreateProduct(product Product) {
+
+	product.Barcode = createRandomEan13()
+
 	db.Create(&product)
 }
 
@@ -39,7 +42,8 @@ func UpdateProduct(product Product, id int) {
 
 	var oldProduct = GetProduct(id)
 
-	oldProduct = product
+	oldProduct.Code = product.Code
+	oldProduct.Name = product.Name
 
 	db.Save(&oldProduct)
 

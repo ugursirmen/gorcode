@@ -67,4 +67,10 @@ var routes = Routes{
 		"/products/{id}",
 		ProductRemove,
 	},
+	Route{
+		"BarcodeImage",
+		"GET",
+		"/barcode/{barcode}",
+		GetBarcodeImage,
+	},
 }

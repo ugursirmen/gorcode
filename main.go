@@ -19,8 +19,6 @@ func main() {
 
 	db.AutoMigrate(&Product{})
 
-	createEan13Barcode()
-
 	router := NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
