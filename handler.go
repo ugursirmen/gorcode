@@ -34,6 +34,18 @@ func ProductDetail(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetBarcodeImage(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	barcode := vars["barcode"]
+
+	barcodeImageString := createEan13Barcode(barcode)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(barcodeImageString))
+}
+
 func ProductAdd(w http.ResponseWriter, r *http.Request) {
 
 	var product Product
@@ -44,8 +56,6 @@ func ProductAdd(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
-
-	product.Barcode = product.Code + "1234567890"
 
 	CreateProduct(product)
 
