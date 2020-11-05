@@ -9,6 +9,21 @@
         data: "ID",
       },
       {
+        data: "image",
+        render: function (image) {
+          if (image) {
+            return (
+              "<img src='data:image/png;base64," +
+              image +
+              "' class='img-fluid img-thumbnail'/>"
+            );
+          }
+
+          return "<img src='http://localhost:8080/default.jpg' class='img-fluid img-thumbnail'/>";
+        },
+        width: "10%",
+      },
+      {
         data: "barcode",
       },
       { data: "code" },
@@ -32,6 +47,10 @@
           "<button type='button' class='btn btn-sm btn-link edit-button'><i class='fa fa-edit'></i></button> | <button type='button' class='btn btn-sm btn-link delete-button'><i class='fa fa-trash'></i></button> | <button type='button' class='btn btn-sm btn-link barcode-button'><i class='fa fa-barcode'></i></button>",
       },
     ],
+    order: [],
+    scrollX: true,
+    pageLength : 5,
+    lengthMenu: [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]]
   });
 
   table.columns([0]).visible(false);
@@ -70,6 +89,7 @@
   $("#productModal").on("hidden.bs.modal", function (e) {
     $("#code").val("");
     $("#name").val("");
+    $("#image").val("");
     $("#selectedId").val("");
   });
 
@@ -82,6 +102,11 @@
   });
 
   $("#btnSave").on("click", function () {
+
+    if(!$("#productForm").valid()){
+      return
+    }
+
     var id = $("#selectedId").val();
     if (!id) {
       addProduct();
@@ -97,13 +122,13 @@
 })();
 
 function addProduct() {
+  $("#btnSave").button('loading');
   $.ajax({
     url: "http://localhost:8080/products",
     type: "POST",
-    data: JSON.stringify({
-      code: $("#code").val(),
-      name: $("#name").val(),
-    }),
+    contentType: false,
+    processData: false,
+    data: new FormData($('form')[0])
   })
     .done(function (result) {
       console.log(result);
@@ -112,6 +137,9 @@ function addProduct() {
     })
     .fail(function (xhr, result, status) {
       console.log("Error:", result);
+    })
+    .always(function(){
+      $("#btnSave").button('reset');
     });
 }
 
@@ -119,10 +147,9 @@ function updateProduct(id) {
   $.ajax({
     url: "http://localhost:8080/products/" + id,
     type: "PUT",
-    data: JSON.stringify({
-      code: $("#code").val(),
-      name: $("#name").val(),
-    }),
+    contentType: false,
+    processData: false,
+    data: new FormData($('form')[0])
   })
     .done(function (result) {
       console.log(result);

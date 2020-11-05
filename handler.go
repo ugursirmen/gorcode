@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -50,12 +52,24 @@ func ProductAdd(w http.ResponseWriter, r *http.Request) {
 
 	var product Product
 
-	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+	image, _, _ := r.FormFile("image")
+
+	if image != nil {
+		imageBytes, err := ioutil.ReadAll(image)
+		if err != nil {
 			panic(err)
 		}
+
+		defer image.Close()
+
+		b64String := base64.StdEncoding.EncodeToString(imageBytes)
+		product.Image = b64String
 	}
+
+	product.Code = r.FormValue("code")
+	product.Name = r.FormValue("name")
+
+	product.Barcode = createRandomEan13()
 
 	CreateProduct(product)
 
@@ -63,14 +77,25 @@ func ProductAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProductUpdate(w http.ResponseWriter, r *http.Request) {
+
 	var product Product
 
-	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+	image, _, _ := r.FormFile("image")
+
+	if image != nil {
+		imageBytes, err := ioutil.ReadAll(image)
+		if err != nil {
 			panic(err)
 		}
+
+		defer image.Close()
+
+		b64String := base64.StdEncoding.EncodeToString(imageBytes)
+		product.Image = b64String
 	}
+
+	product.Code = r.FormValue("code")
+	product.Name = r.FormValue("name")
 
 	vars := mux.Vars(r)
 
